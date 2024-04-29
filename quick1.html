@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Sort Visualization</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            font-size: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .array-container {
+            background-color: #f2f2f2;
+            display: flex;
+            align-items: flex-end;
+            height: 300px;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        
+        .block {
+            width: 20px;
+            background-color: #6b5b95;
+            margin: 0 2px;
+            transition: height 200ms;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .controls input[type="number"],
+        .controls textarea {
+            margin-right: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        
+        .controls button {
+            padding: 8px 15px;
+            background-color: #6b5b95;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Quick Sort Visualization</h1>
+        <div class="controls">
+            <input type="number" id="arraySizeInput" placeholder="Enter array size">
+            <textarea id="dataArrayInput" placeholder="Enter array values (comma-separated)"></textarea>
+            <button onclick="generateArray()">Generate Array</button>
+        </div>
+        <div class="array-container" id="arrayContainer"></div>
+
+        <script>
+            function generateArray() {
+                var sizeInput = document.getElementById("arraySizeInput");
+                var size = parseInt(sizeInput.value);
+                if (isNaN(size) || size <= 0) {
+                    alert("Please enter a valid array size greater than 0.");
+                    return;
+                }
+
+                var dataInput = document.getElementById("dataArrayInput");
+                var dataArray = dataInput.value.split(",");
+                if (dataArray.length !== size) {
+                    alert("Please enter the correct number of array values.");
+                    return;
+                }
+
+                var arrayContainer = document.getElementById("arrayContainer");
+                arrayContainer.innerHTML = "";
+
+                for (var i = 0; i < size; i++) {
+                    var value = parseInt(dataArray[i].trim());
+                    if (isNaN(value)) {
+                        alert("Please enter valid numeric array values.");
+                        return;
+                    }
+                    var block = document.createElement("div");
+                    block.classList.add("block");
+                    block.style.height = value * 3 + "px";
+                    block.innerText = value;
+                    arrayContainer.appendChild(block);
+                }
+
+                quickSort(arrayContainer.children, 0, size - 1);
+            }
+
+            async function lomutoPartition(blocks, low, high) {
+                var pivot = parseInt(blocks[high].style.height);
+                var i = low - 1;
+                blocks[high].style.backgroundColor = "red";
+
+                for (var j = low; j <= high - 1; j++) {
+                    blocks[j].style.backgroundColor = "yellow";
+                    await new Promise(resolve => setTimeout(resolve, 500));
+
+                    var value = parseInt(blocks[j].style.height);
+                    if (value < pivot) {
+                        i++;
+                        swapBlocks(blocks[i], blocks[j]);
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+
+                    blocks[j].style.backgroundColor = "#6b5b95";
+                }
+
+                i++;
+                swapBlocks(blocks[i], blocks[high]);
+                blocks[i].style.backgroundColor = "green";
+                blocks[high].style.backgroundColor = "#6b5b95";
+
+                return i;
+            }
+
+            async function quickSort(blocks, low, high) {
+                if (low < high) {
+                    var pivotIndex = await lomutoPartition(blocks, low, high);
+                    await quickSort(blocks, low, pivotIndex - 1);
+                    await quickSort(blocks, pivotIndex + 1, high);
+                }
+            }
+
+            function swapBlocks(block1, block2) {
+                var tempHeight = block1.style.height;
+                var tempText = block1.innerText;
+                block1.style.height = block2.style.height;
+                block1.innerText = block2.innerText;
+                block2.style.height = tempHeight;
+                block2.innerText = tempText;
+            }
+        </script>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+ 
